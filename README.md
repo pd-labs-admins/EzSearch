@@ -81,6 +81,20 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 
 ![image](assets/img/mode-until-01.png)
 
+## Typeによるキーワードの色分け
+
+メインウインドウの「`Type`」で種類を選択すると、その種類で定義されたキーワードの文字に色が付きます。文字色はキーワードごとに自動生成され、ライトテーマ・ダークテーマそれぞれで見づらい色は使用されません。検索キーワードとの一致部分は背景色で強調されるため、Typeのキーワードとは区別して表示されます。キーワードは大文字・小文字を区別せず、単語単位で一致します。同じ位置から複数のキーワードが一致する場合は長い方を優先します(例: `spanning-tree`は`spanning`より優先)。
+
+| Type | 色を付けるキーワード |
+| --- | --- |
+| - | (色を付けません) |
+| Syslog | `Alert`, `Critical`, `Debug`, `Emergency`, `Error`, `Fatal`, `Fault`, `Info`, `Informational`, `Notice`, `Trace`, `Warn`, `Warning` |
+| Cisco IOS-XE | Cisco IOS-XE（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xe/2621)）の設定モデルから抽出したコマンド/コンフィグと設定値(約11,500語。`interface`、`spanning-tree`、`rapid-pvst`など) |
+| Cisco IOS-XR | Cisco IOS-XR（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr/2621)）のUnified Models(`Cisco-IOS-XR-um-*-cfg`)から抽出したコマンド/コンフィグと設定値(約9,100語。`router`、`route-policy`、`prefix-set`など) |
+| Cisco NX-OS | Cisco NX-OS（[YANGモデル 10.6-4](https://github.com/YangModels/yang/tree/main/vendor/cisco/nx/10.6-4)）のデバイスモデル(`Cisco-NX-OS-device`)から抽出したコマンド/コンフィグと設定値(約4,900語。`feature`、`vpc`、`nxapi`など)。デバイスモデルはCLIではなく内部オブジェクトの構造に基づくため、`switchport`や`spanning-tree`など一部のCLIキーワードは含まれません |
+
+各Typeのキーワードはソースコードの`keywords/<ファイル名>.txt`で管理しています(1行に1キーワード、`#`で始まる行はコメント)。ファイルを追加するとTypeが増えます。「`Type`」欄の表示名は、ファイル内の`# Name: <表示名>`行で指定します(省略時はファイル名)。キーワードはビルド時にアプリケーションへ埋め込まれるため、配布物はシングルバイナリのままです。
+
 ## 正規表現を使った検索
 
 検索キーワードには正規表現を利用することができます(設定で無効化することもできます)。例えば「`interface` または `line` を含むセクションを表示したい」場合は検索モードを「`Section`」に設定し、検索キーワードには「`(interface|line)`」のように指定します。
@@ -169,6 +183,7 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 | GUI設定項目 | YAMLの設定名 | デフォルト値 | 説明 |
 | --- | --- | --- | --- |
 | Target directory | `target_directory` | `""` | 検索対象ディレクトリ。 |
+| Type（メインウインドウ） | `type` | `""` | キーワードの文字色を付けるTypeです。`""`は「`-`」(色を付けない)を意味します。 |
 | Automatic updates | `auto_update` | `true` | 起動時などに更新確認を行います。 |
 | Use regular expressions | `regex` | `true` | 検索キーワードを正規表現として扱います。 |
 | Case-sensitive | `case_sensitive` | `false` | 大文字と小文字を区別します。 |
@@ -180,19 +195,6 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 | History limit | `history_limit` | `10` | ディレクトリ・検索語・置換語・ファイル名の履歴件数です。 |
 | Font size | `font_size` | `14` | 検索結果の文字サイズです。 |
 | Theme | `theme` | `"system"` | テーマです。`system`、`light`、`dark`を指定できます。 |
-
-### Highlightタブ
-
-| GUI設定項目 | YAMLの設定名 | デフォルト値 | 説明 |
-| --- | --- | --- | --- |
-| Match | `match_color` | `"#78b85a"` | 検索キーワードに一致した部分の色です。 |
-| Enable highlighting for fixed keywords | `highlight_fixed_keywords` | `true` | High、Middle、Lowの固定キーワード強調を有効にします。 |
-| High（キーワード） | `highlight_high` | `Emergency`, `Alert`, `Critical`, `Fatal`, `Error`, `Fault` | 高重要度として強調するキーワード一覧です。 |
-| High（色） | `highlight_high_color` | `"#e53935"` | Highキーワードの色です。 |
-| Middle（キーワード） | `highlight_middle` | `Warning`, `Warn` | 中重要度として強調するキーワード一覧です。 |
-| Middle（色） | `highlight_middle_color` | `"#f28c28"` | Middleキーワードの色です。 |
-| Low（キーワード） | `highlight_low` | `Notice`, `Informational`, `Info`, `Debug`, `Trace` | 低重要度として強調するキーワード一覧です。 |
-| Low（色） | `highlight_low_color` | `"#e6b800"` | Lowキーワードの色です。 |
 
 ### Ignoredタブ
 
