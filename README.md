@@ -16,7 +16,7 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 
 ## 検索の実行
 
-ツールを実行したら「`Browse`」をクリックして検索したいファイルが保存されているディレクトリを指定します。もしくはツールに検索対象ディレクトリをドラッグ＆ドロップします。
+ツールを実行したら「`Open`」(Ctrl+O)をクリックして検索したいファイルが保存されているディレクトリを指定します。もしくはツールに検索対象ディレクトリをドラッグ＆ドロップします。
 
 ![image](assets/img/directory-01.png)
 
@@ -90,11 +90,20 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 | --- | --- |
 | - | (色を付けません) |
 | Syslog | `Alert`, `Critical`, `Debug`, `Emergency`, `Error`, `Fatal`, `Fault`, `Info`, `Informational`, `Notice`, `Trace`, `Warn`, `Warning` |
+| Cisco ASA | Cisco Secure Firewall ASA（[コマンドリファレンス](https://www.cisco.com/c/en/us/support/security/adaptive-security-appliance-asa-software/products-command-reference-list.html)）から抽出したコマンド/コンフィグと設定値(約4,100語。`access-list`、`nameif`、`tunnel-group`など)。`show asp drop`のドロップ理由(`acl-drop`など)も含みます |
 | Cisco IOS-XE | Cisco IOS-XE（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xe/2621)）の設定モデルから抽出したコマンド/コンフィグと設定値(約11,500語。`interface`、`spanning-tree`、`rapid-pvst`など) |
 | Cisco IOS-XR | Cisco IOS-XR（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr/2621)）のUnified Models(`Cisco-IOS-XR-um-*-cfg`)から抽出したコマンド/コンフィグと設定値(約9,100語。`router`、`route-policy`、`prefix-set`など) |
 | Cisco NX-OS | Cisco NX-OS（[YANGモデル 10.6-4](https://github.com/YangModels/yang/tree/main/vendor/cisco/nx/10.6-4)）のデバイスモデル(`Cisco-NX-OS-device`)から抽出したコマンド/コンフィグと設定値(約4,900語。`feature`、`vpc`、`nxapi`など)。デバイスモデルはCLIではなく内部オブジェクトの構造に基づくため、`switchport`や`spanning-tree`など一部のCLIキーワードは含まれません |
 
 各Typeのキーワードはソースコードの`keywords/<ファイル名>.txt`で管理しています(1行に1キーワード、`#`で始まる行はコメント)。ファイルを追加するとTypeが増えます。「`Type`」欄の表示名は、ファイル内の`# Name: <表示名>`行で指定します(省略時はファイル名)。キーワードはビルド時にアプリケーションへ埋め込まれるため、配布物はシングルバイナリのままです。
+
+## 検索前のファイル表示
+
+「Files」に検索対象が入力されていて検索キーワードが空欄の場合（検索が未実行の場合）、検索モードにかかわらず、検索結果ウインドウにはファイルの中身をそのまま表示します。「Files」のファイルをクリックすると、そのファイルを表示します。
+
+## 検索結果ウインドウの分割
+
+検索結果ウインドウを「横分割」または「縦分割」すると、新たに分割されたウインドウには「Files」で表示中のファイルの次のファイルを表示します。表示中のファイルが最後のファイルの場合は、最初のファイルを表示します。
 
 ## 正規表現を使った検索
 
@@ -210,7 +219,9 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 | ショートカット1 | ショートカット2 | 説明                                   |
 |-----------------|-----------------|----------------------------------------|
 | Ctrl+F          | Cmd+F           | フォーカスを「検索キーワード」欄へ移動 |
-| Ctrl+R          | Cmd+R           | フォーカスを「置換キーワード」欄へ移動 |
+| Ctrl+R          | Cmd+R           | 「Reset」(検索キーワード等を初期化。Filesは保持) |
+| Ctrl+O          | Cmd+O           | 「Open」(検索対象のディレクトリを追加) |
+| Ctrl+Shift+R    | Cmd+Shift+R     | Filesの「Clear」(検索対象をすべて削除) |
 | PageDown        | -               | 次のファイルへ移動                     |
 | PageUp          | -               | 前のファイルへ移動                     |
 | End             | -               | 検索結果の最後へ移動                   |
