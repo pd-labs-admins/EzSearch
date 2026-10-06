@@ -9,6 +9,8 @@ EzSearchはディレクトリ内のテキストファイルを指定キーワー
 - キーワードのハイライト表示
 - 検索結果のHTML出力
 - ふたつファイルの比較機能(Diff)
+- ネットワーク機器のコンフィグやログに合わせたキーワードの色分け(Type)
+- 複数ウインドウでの同時作業
 
 ## インストール
 
@@ -84,7 +86,7 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 
 ## Typeによるキーワードの色分け
 
-メインウインドウの「`Type`」で種類を選択すると、その種類で定義されたキーワードの文字に色が付きます。文字色はキーワードごとに自動生成され、ライトテーマ・ダークテーマそれぞれで見づらい色は使用されません。検索キーワードとの一致部分は背景色で強調されるため、Typeのキーワードとは区別して表示されます。キーワードは大文字・小文字を区別せず、単語単位で一致します。同じ位置から複数のキーワードが一致する場合は長い方を優先します(例: `spanning-tree`は`spanning`より優先)。インターフェイス名は後に続くインターフェイス番号も含めて色が付きます(例: `GigabitEthernet1/0/1`、`Ethernet1/1`、`Bundle-Ether1.100`、`port1`)。`show`コマンドの出力で使われる短縮形(`Gi1/0/1`、`Te1/1/1`、`Po10`、`Eth1/1`など)も対象です。
+メインウインドウの「`Type`」で種類を選択すると、その種類で定義されたキーワードの文字に色が付きます。文字色はキーワードごとに自動生成され、ライトテーマ・ダークテーマそれぞれで見づらい色は使用されません。検索キーワードとの一致部分は背景色で強調されるため、Typeのキーワードとは区別して表示されます。キーワードは大文字・小文字を区別せず、単語単位で一致します。同じ位置から複数のキーワードが一致する場合は長い方を優先します(例: `spanning-tree`は`spanning`より優先)。インターフェイス名は後に続くインターフェイス番号も含めて色が付きます(例: `GigabitEthernet1/0/1`、`Ethernet1/1`、`Bundle-Ether1.100`、`port1`、`tunnel.1`)。`show`コマンドの出力で使われる短縮形(`Gi1/0/1`、`Te1/1/1`、`Po10`、`Eth1/1`など)も対象です。
 
 「`-`」以外のTypeを選択すると、正しい表記のIPアドレス・IPネットワークにも色が付きます(例: `11.22.33.44`、`11.22.33.44/24`、`2001:db8::1`、`2001:db8::/32`)。`111.222.333.444`(範囲外の値)、`11.22.33.44/33`(範囲外のプレフィックス長)、`1.2.3.4.5`、`01.2.3.4`(先頭が0)のようにIPアドレスとしてありえない表記には色が付きません。
 
@@ -98,10 +100,20 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 | Cisco IOS-XR | Cisco IOS-XR（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr/2621)）のUnified Models(`Cisco-IOS-XR-um-*-cfg`)から抽出したコマンド/コンフィグと設定値(約9,200語。`router`、`route-policy`、`prefix-set`など)。インターフェイス名(`TenGigE0/0/0/0`、`Bundle-Ether1`、`BE1`など)も含みます |
 | Cisco NX-OS | Cisco NX-OS（[YANGモデル 10.6-4](https://github.com/YangModels/yang/tree/main/vendor/cisco/nx/10.6-4)）のデバイスモデル(`Cisco-NX-OS-device`)から抽出したコマンド/コンフィグと設定値(約4,900語。`feature`、`vpc`、`nxapi`など)。インターフェイス名(`Ethernet1/1`、`Eth1/1`、`port-channel10`など)も含みます。デバイスモデルはCLIではなく内部オブジェクトの構造に基づくため、`switchport`や`spanning-tree`など一部のCLIキーワードは含まれません |
 | FortiGate | FortiOS 7.6.7（[CLI Reference](https://docs.fortinet.com/document/fortigate/7.6.7/cli-reference/84566/fortios-cli-reference)）から抽出したコマンド/コンフィグと設定値(約11,300語。`config`、`allowaccess`、`enable`など)。インターフェイス名(`port1`、`wan1`など)も含みます |
+| PaloAlto PAN-OS | Palo Alto Networks公式の[pan-os-codegen](https://github.com/PaloAltoNetworks/pan-os-codegen)(pango SDK / Terraform Providerの生成元)のスペックから抽出したPAN-OS([ドキュメント](https://docs.paloaltonetworks.com/pan-os))のコマンド/コンフィグと設定値(約2,100語。`deviceconfig`、`rulebase`、`security`など)。`show`、`request`、`commit`などの運用・設定モードのコマンドと、インターフェイス名(`ethernet1/1`、`ae1`、`tunnel.1`、`vlan.10`など)も含みます。スペックはSDKが扱う設定を対象とするため、一部のCLIキーワードは含まれません |
 
 各Typeのキーワードはソースコードの`keywords/<ファイル名>.txt`で管理しています(1行に1キーワード、`#`で始まる行はコメント)。ファイルを追加するとTypeが増えます。「`Type`」欄の表示名は、ファイル内の`# Name: <表示名>`行で指定します(省略時はファイル名)。`*`で終わる行はインターフェイス名で、後に続くインターフェイス番号も含めて色を付けます(例: `GigabitEthernet*`は`GigabitEthernet1/0/1`に一致)。キーワードはビルド時にアプリケーションへ埋め込まれるため、配布物はシングルバイナリのままです。
 
-Cisco IOS-XE / IOS-XR / NX-OS、FortiGate、A10 Networksのキーワードファイルは`cmd/gen-keywords`で生成します。使い方はソースコード先頭のコメントを参照してください。
+Cisco IOS-XE / IOS-XR / NX-OS、FortiGate、A10 Networks、PaloAlto PAN-OSのキーワードファイルは`cmd/gen-keywords`で生成します。使い方はソースコード先頭のコメントを参照してください。
+
+### Typeの初期値と表示する項目
+
+Settingsウインドウの「`Type`」タブでは、以下を設定できます。
+
+- `Default type`: メインウインドウの「`Reset`」をクリックしたときに選択されるTypeです。デフォルト値は「`-`」です
+- `Types shown in the Type list`: メインウインドウの「`Type`」欄に表示する項目です。チェックを外した項目は「`Type`」欄に表示されなくなります。「`Default type`」に指定した項目はチェックを外せません
+
+選択中のTypeを非表示にした場合や、起動時に選択されていたTypeが非表示の場合は、「`Default type`」のTypeが選択されます。
 
 ## 検索前のファイル表示
 
@@ -119,7 +131,7 @@ Cisco IOS-XE / IOS-XR / NX-OS、FortiGate、A10 Networksのキーワードファ
 
 ## 検索キーワードを移動する
 
-「→」または「←」（カーソルキーの左右)を押すことで検索キーワードに一致した行を移動できます。
+「↓」または「↑」（カーソルキーの上下)を押すことで検索キーワードに一致した行を移動できます。Ctrl+↓ / Ctrl+↑（macOSではCmd+↓ / Cmd+↑も可）を押すと、分割表示しているすべての検索結果ウインドウで同時に移動します。
 
 ![image](assets/img/keyword-next-01.gif)
 
@@ -152,7 +164,7 @@ Cisco IOS-XE / IOS-XR / NX-OS、FortiGate、A10 Networksのキーワードファ
 
 ## 検索結果をHTMLファイルとして保存する
 
-「`Export`」をクリックすることで検索結果をHTMLファイルとして保存することができます。
+「`Save as`」(Ctrl+S)をクリックすることで検索結果をHTMLファイルとして保存することができます。
 
 ![image](assets/img/export-01.png)
 
@@ -183,6 +195,14 @@ Diffウインドウでは、メインウインドウの分割方向にかかわ�
 
 ![image](assets/img/replace-02.png)
 
+## 新しいウインドウを開く
+
+macOSではメニューバーの「`File`」→「`New`」(Cmd+N)、WindowsではCtrl+Nで、EzSearchのウインドウを追加で開くことができます。ウインドウごとに異なる検索キーワードやファイルで作業できます。ドラッグ＆ドロップしたファイルやディレクトリは、ドロップしたウインドウの「Files」にだけ追加されます。
+
+## バージョン情報
+
+バージョンはSettingsウインドウの上部に表示されます。macOSではメニューバーの「`EzSearch`」→「`About EzSearch`」からも確認でき、バイナリを公開している[GitHubリポジトリ](https://github.com/pd-labs-admins/EzSearch)へのリンクも表示されます。
+
 ## 設定ファイル
 
 OSごとに以下のパスへ設定ファイルが作成されます。
@@ -198,14 +218,16 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 
 | GUI設定項目 | YAMLの設定名 | デフォルト値 | 説明 |
 | --- | --- | --- | --- |
-| Target directory | `target_directory` | `""` | 検索対象ディレクトリ。 |
+| Files（メインウインドウ） | `targets` | `[]` | 「Files」に追加した検索対象のファイルとディレクトリです。 |
 | Type（メインウインドウ） | `type` | `""` | キーワードの文字色を付けるTypeです。`""`は「`-`」(色を付けない)を意味します。 |
+| Mode（メインウインドウ） | `mode` | `"no-filter"` | 検索モードです。 |
 | Automatic updates | `auto_update` | `true` | 起動時などに更新確認を行います。 |
 | Use regular expressions | `regex` | `true` | 検索キーワードを正規表現として扱います。 |
 | Case-sensitive | `case_sensitive` | `false` | 大文字と小文字を区別します。 |
 | Search directories recursively | `recursive` | `true` | サブディレクトリを再帰的に検索します。 |
 | Wrap | `wrap` | `false` | 長い検索結果行を折り返して表示します。 |
 | Copy to clipboard on selection | `copy_on_selection` | `true` | 検索結果の選択範囲をクリップボードへコピーします。 |
+| Show files with no matches | `show_unmatched_files` | `false` | 検索キーワードに一致しないファイルも「Files」に表示します。 |
 | Context lines | `context_lines` | `0` | 一致行の前後に表示するコンテキスト行数です。 |
 | Delay seconds | `delay_seconds` | `3` | 入力変更後に自動検索を開始するまでの秒数です。最小値は3秒です。 |
 | History limit | `history_limit` | `10` | ディレクトリ・検索語・置換語・ファイル名の履歴件数です。 |
@@ -218,22 +240,35 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 | --- | --- | --- | --- |
 | Ignored files | `ignored_files` | `*.db`, `*.dll`, `*.dylib`, `*.exe`, `*.gif`, `*.jpeg`, `*.jpg`, `*.out`, `*.png`, `*.rar`, `*.retry`, `*.so`, `*.webp`, `*.zip`, `*.docx`, `*.docm`, `*.doc`, `*.xlsx`, `*.xlsm`, `*.xls`, `*.pptx`, `*.pptm`, `*.ppt`, `*.accdb`, `*.mdb`, `*.pst`, `*.ost`, `*.one`, `*.pub`, `*.vsd`, `*.vsdx`, `.DS_Store`, `.Trashes`, `Thumbs.db`, `desktop.ini`, `$RECYCLE.BIN` | 検索対象から除外するファイル名・拡張子のパターン一覧です。 |
 
+### Typeタブ
+
+| GUI設定項目 | YAMLの設定名 | デフォルト値 | 説明 |
+| --- | --- | --- | --- |
+| Default type | `default_type` | `""` | メインウインドウの「`Reset`」で選択されるTypeです。`""`は「`-`」を意味します。 |
+| Types shown in the Type list | `disabled_types` | `[]` | 「`Type`」欄に表示しない(チェックを外した)TypeのIDです。「`-`」は`"-"`で表します。 |
+
 ## ショートカットキー一覧
 
 アプリケーション全体では以下のショートカットキーを利用することができます。
 
 | ショートカット1 | ショートカット2 | 説明                                   |
 |-----------------|-----------------|----------------------------------------|
+| Ctrl+N          | Cmd+N           | 新しいウインドウを開く(Ctrl+NはWindows、Cmd+NはmacOSのメニューバーの「File」→「New」) |
+| -               | Cmd+W           | (macOS)ウインドウを閉じる              |
 | Ctrl+F          | Cmd+F           | フォーカスを「検索キーワード」欄へ移動 |
+| Ctrl+Shift+F    | Cmd+Shift+F     | フォーカスを「Files」のファイル名絞り込み欄へ移動 |
+| Enter           | -               | (検索キーワード欄で)すぐに検索を実行   |
+| ↑ / ↓           | -               | (検索・置換キーワード欄、ファイル名絞り込み欄で)入力履歴を切り替え |
 | Ctrl+R          | Cmd+R           | 「Reset」(検索キーワード等を初期化。Filesは保持) |
 | Ctrl+O          | Cmd+O           | 「Open」(検索対象のディレクトリを追加) |
 | Ctrl+Shift+R    | Cmd+Shift+R     | Filesの「Clear」(検索対象をすべて削除) |
+| Ctrl+S          | Cmd+S           | 「Save as」(検索結果をHTMLファイルとして保存) |
 | PageDown        | -               | 次のファイルへ移動                     |
 | PageUp          | -               | 前のファイルへ移動                     |
 | End             | -               | 検索結果の最後へ移動                   |
 | Home            | -               | 検索結果の先頭へ移動                   |
-| ↓               | Ctrl+N          | 次のキーワードへ移動                   |
-| ↑               | Ctrl+P          | 前のキーワードへ移動                   |
+| ↓               | -               | 次のキーワードへ移動                   |
+| ↑               | -               | 前のキーワードへ移動                   |
 | Ctrl+↓          | Cmd+↓           | すべての検索結果で次のキーワードへ移動 |
 | Ctrl+↑          | Cmd+↑           | すべての検索結果で前のキーワードへ移動 |
 | Shift+↓         | -               | 検索結果を一行下にスクロール           |
@@ -244,6 +279,8 @@ GUI上の設定項目と設定ファイルの項目は以下のように対応�
 | →               | Ctrl+Tab        | (分割時)次の検索結果ウインドウへ移動   |
 | ←               | Ctrl+Shift+Tab  | (分割時)前の検索結果ウインドウへ移動   |
 
+「ショートカット2」のCmd+…はmacOS用です。macOSでは、新しいウインドウを開く操作とウインドウを閉じる操作を除き、Cmdの代わりにCtrlも利用できます。
+
 Diffウインドウでは以下のショートカットキーを利用することができます。
 
 | ショートカット1 | ショートカット2 | 説明                 |
@@ -252,3 +289,6 @@ Diffウインドウでは以下のショートカットキーを利用するこ�
 | ↑               | -               | 前の変更箇所へ移動   |
 | Home            | -               | 先頭へ移動           |
 | End             | -               | 最後へ移動           |
+| Esc             | -               | Diffウインドウを閉じる |
+
+SettingsウインドウとAboutウインドウはEscで閉じることができます。
