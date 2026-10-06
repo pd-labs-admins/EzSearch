@@ -84,18 +84,24 @@ EzSearchはシングルバイナリだけで動作します。[Releases](https:/
 
 ## Typeによるキーワードの色分け
 
-メインウインドウの「`Type`」で種類を選択すると、その種類で定義されたキーワードの文字に色が付きます。文字色はキーワードごとに自動生成され、ライトテーマ・ダークテーマそれぞれで見づらい色は使用されません。検索キーワードとの一致部分は背景色で強調されるため、Typeのキーワードとは区別して表示されます。キーワードは大文字・小文字を区別せず、単語単位で一致します。同じ位置から複数のキーワードが一致する場合は長い方を優先します(例: `spanning-tree`は`spanning`より優先)。
+メインウインドウの「`Type`」で種類を選択すると、その種類で定義されたキーワードの文字に色が付きます。文字色はキーワードごとに自動生成され、ライトテーマ・ダークテーマそれぞれで見づらい色は使用されません。検索キーワードとの一致部分は背景色で強調されるため、Typeのキーワードとは区別して表示されます。キーワードは大文字・小文字を区別せず、単語単位で一致します。同じ位置から複数のキーワードが一致する場合は長い方を優先します(例: `spanning-tree`は`spanning`より優先)。インターフェイス名は後に続くインターフェイス番号も含めて色が付きます(例: `GigabitEthernet1/0/1`、`Ethernet1/1`、`Bundle-Ether1.100`、`port1`)。`show`コマンドの出力で使われる短縮形(`Gi1/0/1`、`Te1/1/1`、`Po10`、`Eth1/1`など)も対象です。
+
+「`-`」以外のTypeを選択すると、正しい表記のIPアドレス・IPネットワークにも色が付きます(例: `11.22.33.44`、`11.22.33.44/24`、`2001:db8::1`、`2001:db8::/32`)。`111.222.333.444`(範囲外の値)、`11.22.33.44/33`(範囲外のプレフィックス長)、`1.2.3.4.5`、`01.2.3.4`(先頭が0)のようにIPアドレスとしてありえない表記には色が付きません。
 
 | Type | 色を付けるキーワード |
 | --- | --- |
 | - | (色を付けません) |
 | Syslog | `Alert`, `Critical`, `Debug`, `Emergency`, `Error`, `Fatal`, `Fault`, `Info`, `Informational`, `Notice`, `Trace`, `Warn`, `Warning` |
-| Cisco ASA | Cisco Secure Firewall ASA（[コマンドリファレンス](https://www.cisco.com/c/en/us/support/security/adaptive-security-appliance-asa-software/products-command-reference-list.html)）から抽出したコマンド/コンフィグと設定値(約4,100語。`access-list`、`nameif`、`tunnel-group`など)。`show asp drop`のドロップ理由(`acl-drop`など)も含みます |
-| Cisco IOS-XE | Cisco IOS-XE（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xe/2621)）の設定モデルから抽出したコマンド/コンフィグと設定値(約11,500語。`interface`、`spanning-tree`、`rapid-pvst`など) |
-| Cisco IOS-XR | Cisco IOS-XR（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr/2621)）のUnified Models(`Cisco-IOS-XR-um-*-cfg`)から抽出したコマンド/コンフィグと設定値(約9,100語。`router`、`route-policy`、`prefix-set`など) |
-| Cisco NX-OS | Cisco NX-OS（[YANGモデル 10.6-4](https://github.com/YangModels/yang/tree/main/vendor/cisco/nx/10.6-4)）のデバイスモデル(`Cisco-NX-OS-device`)から抽出したコマンド/コンフィグと設定値(約4,900語。`feature`、`vpc`、`nxapi`など)。デバイスモデルはCLIではなく内部オブジェクトの構造に基づくため、`switchport`や`spanning-tree`など一部のCLIキーワードは含まれません |
+| A10 Networks | A10 Networks ACOS 7.0.3（[Command Line Interface Reference](https://documentation.a10networks.com/ACOS/703x/ACOS_7.0.3/html/cli_master_Responsive_HTML5/Default.htm)）から抽出したコマンド/コンフィグと設定値(約4,800語。`slb`、`virtual-server`、`service-group`、`round-robin`など) |
+| Cisco ASA | Cisco Secure Firewall ASA（[コマンドリファレンス](https://www.cisco.com/c/en/us/support/security/adaptive-security-appliance-asa-software/products-command-reference-list.html)）から抽出したコマンド/コンフィグと設定値(約4,100語。`access-list`、`nameif`、`tunnel-group`など)。`show asp drop`のドロップ理由(`acl-drop`など)とインターフェイス名(`GigabitEthernet0/1`など)も含みます |
+| Cisco IOS-XE | Cisco IOS-XE（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xe/2621)）の設定モデルから抽出したコマンド/コンフィグと設定値(約12,000語。`interface`、`spanning-tree`、`rapid-pvst`など)。インターフェイス名(`GigabitEthernet1/0/1`、`Gi1/0/1`、`Vlan10`など)も含みます |
+| Cisco IOS-XR | Cisco IOS-XR（[YANGモデル 2621](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr/2621)）のUnified Models(`Cisco-IOS-XR-um-*-cfg`)から抽出したコマンド/コンフィグと設定値(約9,200語。`router`、`route-policy`、`prefix-set`など)。インターフェイス名(`TenGigE0/0/0/0`、`Bundle-Ether1`、`BE1`など)も含みます |
+| Cisco NX-OS | Cisco NX-OS（[YANGモデル 10.6-4](https://github.com/YangModels/yang/tree/main/vendor/cisco/nx/10.6-4)）のデバイスモデル(`Cisco-NX-OS-device`)から抽出したコマンド/コンフィグと設定値(約4,900語。`feature`、`vpc`、`nxapi`など)。インターフェイス名(`Ethernet1/1`、`Eth1/1`、`port-channel10`など)も含みます。デバイスモデルはCLIではなく内部オブジェクトの構造に基づくため、`switchport`や`spanning-tree`など一部のCLIキーワードは含まれません |
+| FortiGate | FortiOS 7.6.7（[CLI Reference](https://docs.fortinet.com/document/fortigate/7.6.7/cli-reference/84566/fortios-cli-reference)）から抽出したコマンド/コンフィグと設定値(約11,300語。`config`、`allowaccess`、`enable`など)。インターフェイス名(`port1`、`wan1`など)も含みます |
 
-各Typeのキーワードはソースコードの`keywords/<ファイル名>.txt`で管理しています(1行に1キーワード、`#`で始まる行はコメント)。ファイルを追加するとTypeが増えます。「`Type`」欄の表示名は、ファイル内の`# Name: <表示名>`行で指定します(省略時はファイル名)。キーワードはビルド時にアプリケーションへ埋め込まれるため、配布物はシングルバイナリのままです。
+各Typeのキーワードはソースコードの`keywords/<ファイル名>.txt`で管理しています(1行に1キーワード、`#`で始まる行はコメント)。ファイルを追加するとTypeが増えます。「`Type`」欄の表示名は、ファイル内の`# Name: <表示名>`行で指定します(省略時はファイル名)。`*`で終わる行はインターフェイス名で、後に続くインターフェイス番号も含めて色を付けます(例: `GigabitEthernet*`は`GigabitEthernet1/0/1`に一致)。キーワードはビルド時にアプリケーションへ埋め込まれるため、配布物はシングルバイナリのままです。
+
+Cisco IOS-XE / IOS-XR / NX-OS、FortiGate、A10 Networksのキーワードファイルは`cmd/gen-keywords`で生成します。使い方はソースコード先頭のコメントを参照してください。
 
 ## 検索前のファイル表示
 
